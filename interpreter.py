@@ -1,5 +1,5 @@
 from lexer import TokenType, Lexer
-from parser import ASTNode, BinaryOp, UnaryOp, Number, Boolean, Parser
+from parser import Parser
 
 
 class NodeVisitor:
