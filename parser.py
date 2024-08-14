@@ -2,7 +2,13 @@ from lexer import Lexer, TokenType
 
 
 class ASTNode:
-    pass
+    def accept(self, visitor):
+        method_name = f'visit_{type(self).__name__}'
+        visit = getattr(visitor, method_name, self.generic_visit)
+        return visit(self)
+
+    def generic_visit(self, visitor):
+        raise Exception(f'No visit_{type(self).__name__} method defined')
 
 
 class BinaryOp(ASTNode):
