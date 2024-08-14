@@ -122,7 +122,7 @@ class Parser:
 # Test the parser
 def test_parser():
     test_cases = [
-        "42 + 10",
+        "42 + 10 ",
         "15 - 5 * 3",
         "3 * (7 - 2)",
         "20 / 4 % 3",

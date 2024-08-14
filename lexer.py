@@ -1,6 +1,7 @@
 import re
 from enum import Enum, auto
 
+
 class TokenType(Enum):
     INTEGER = auto()
     BOOLEAN = auto()
@@ -9,8 +10,6 @@ class TokenType(Enum):
     MULTIPLY = auto()
     DIVIDE = auto()
     MODULO = auto()
-    LPAREN = auto()
-    RPAREN = auto()
     AND = auto()
     OR = auto()
     NOT = auto()
@@ -21,6 +20,8 @@ class TokenType(Enum):
     GREATER_THAN_OR_EQUAL = auto()
     LESS_THAN_OR_EQUAL = auto()
     EOF = auto()
+    INVALID = auto()  # New token type for invalid characters
+
 
 class Token:
     def __init__(self, type: TokenType, value):
@@ -30,13 +31,18 @@ class Token:
     def __str__(self):
         return f'Token({self.type.name}, {self.value})'
 
+
+class LexerError(Exception):
+    pass
+
+
 class Lexer:
     def __init__(self, text):
         self.text = text
         self.pos = 0
 
     def error(self):
-        raise Exception(f'Invalid character: {self.text[self.pos]}')
+        return LexerError(f'Invalid character: {self.text[self.pos]}')
 
     def peek(self):
         peek_pos = self.pos + 1
@@ -88,12 +94,6 @@ class Lexer:
         elif current_char == '%':
             self.pos += 1
             return Token(TokenType.MODULO, '%')
-        elif current_char == '(':
-            self.pos += 1
-            return Token(TokenType.LPAREN, '(')
-        elif current_char == ')':
-            self.pos += 1
-            return Token(TokenType.RPAREN, ')')
 
         # Boolean operations
         if current_char == '&' and self.peek() == '&':
@@ -127,7 +127,10 @@ class Lexer:
             self.pos += 1
             return Token(TokenType.LESS_THAN, '<')
 
-        self.error()
+        # If we've reached this point, the character is invalid
+        self.pos += 1
+        return Token(TokenType.INVALID, current_char)
+
 
 # Test the lexer
 def test_lexer():
@@ -149,16 +152,24 @@ def test_lexer():
         "6 >= 6",
         "4 <= 5",
         "1 + 2 == 3 && 4 * 5 > 15",
+        "Hello World",  # This should produce INVALID tokens
+        "3 $ 4"  # This should produce an INVALID token for $
     ]
 
     for case in test_cases:
         print(f"\nLexing: {case}")
         lexer = Lexer(case)
-        token = lexer.get_next_token()
-        while token.type != TokenType.EOF:
-            print(token)
+        try:
             token = lexer.get_next_token()
-        print(token)  # Print EOF token
+            while token.type != TokenType.EOF:
+                print(token)
+                if token.type == TokenType.INVALID:
+                    print(f"Warning: Invalid token encountered: {token.value}")
+                token = lexer.get_next_token()
+            print(token)  # Print EOF token
+        except LexerError as e:
+            print(f"Lexer Error: {str(e)}")
+
 
 if __name__ == "__main__":
     test_lexer()
