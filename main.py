@@ -1,6 +1,6 @@
-from lexer import Lexer
-from parser import Parser, ParserError
 from interpreter import Interpreter
+from lexer import Lexer
+from parserR import Parser, ParserError
 
 
 def main():
@@ -16,6 +16,7 @@ def main():
         interpreter = Interpreter()
         try:
             tree = parser.parse()
+            print(tree)
             result = interpreter.interpret(tree)
             print(result)
         except ParserError as e:

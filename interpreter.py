@@ -1,5 +1,5 @@
 from lexer import TokenType, Lexer
-from parser import Parser
+from parserR import Parser
 
 
 class NodeVisitor:
@@ -57,7 +57,7 @@ class Interpreter(NodeVisitor):
 # Test the interpreter
 def test_interpreter():
     test_cases = [
-        "42 + 10",
+        "42--6",
         "15 - 5 * 3",
         "3 * (7 - 2)",
         "20 / 4 % 3",

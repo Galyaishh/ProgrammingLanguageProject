@@ -64,7 +64,7 @@ class Lexer:
             return self.get_next_token()
 
         # Integer
-        if current_char.isdigit() or current_char == '-':
+        if current_char.isdigit() or (current_char == '-' and (self.pos == 0 or self.text[self.pos-1] in '+-*/( ')):
             integer_pattern = r'-?\d+'
             match = re.match(integer_pattern, self.text[self.pos:])
             if match:
@@ -143,7 +143,7 @@ class Lexer:
 # Test the lexer
 def test_lexer():
     test_cases = [
-        "42 + 10",
+        "42 + 10 ^",
         "15 - 5",
         "3 * 7",
         "20 / 4",
@@ -174,7 +174,7 @@ def test_lexer():
                 if token.type == TokenType.INVALID:
                     print(f"Warning: Invalid token encountered: {token.value}")
                 token = lexer.get_next_token()
-            print(token)  # Print EOF token
+            print(token)
         except LexerError as e:
             print(f"Lexer Error: {str(e)}")
 
