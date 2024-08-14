@@ -10,6 +10,8 @@ class TokenType(Enum):
     MULTIPLY = auto()
     DIVIDE = auto()
     MODULO = auto()
+    LPAREN = auto()
+    RPAREN = auto()
     AND = auto()
     OR = auto()
     NOT = auto()
@@ -20,7 +22,7 @@ class TokenType(Enum):
     GREATER_THAN_OR_EQUAL = auto()
     LESS_THAN_OR_EQUAL = auto()
     EOF = auto()
-    INVALID = auto()  # New token type for invalid characters
+    INVALID = auto()
 
 
 class Token:
@@ -94,6 +96,12 @@ class Lexer:
         elif current_char == '%':
             self.pos += 1
             return Token(TokenType.MODULO, '%')
+        elif current_char == '(':
+            self.pos += 1
+            return Token(TokenType.LPAREN, '(')
+        elif current_char == ')':
+            self.pos += 1
+            return Token(TokenType.RPAREN, ')')
 
         # Boolean operations
         if current_char == '&' and self.peek() == '&':
