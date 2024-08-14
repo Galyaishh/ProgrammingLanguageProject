@@ -1,6 +1,10 @@
 from lexer import Lexer, TokenType
 
 
+class ParserError(Exception):
+    pass
+
+
 class ASTNode:
     def accept(self, visitor):
         method_name = f'visit_{type(self).__name__}'
@@ -40,14 +44,18 @@ class Parser:
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
 
-    def error(self):
-        raise Exception('Invalid syntax')
+    def error(self, message="Invalid syntax"):
+        raise ParserError(f"{message} at position {self.lexer.pos}")
 
     def eat(self, token_type):
+        # if self.current_token.type == TokenType.INVALID:
+        #     self.error(f"Invalid token: {self.current_token.value}")
         if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
+            if self.current_token.type == TokenType.INVALID:
+                self.error(f"Invalid token: {self.current_token.value}")
         else:
-            self.error()
+            self.error(f"Expected {token_type}, found {self.current_token.type}")
 
     def factor(self):
         token = self.current_token
@@ -65,6 +73,8 @@ class Parser:
         elif token.type == TokenType.NOT:
             self.eat(TokenType.NOT)
             return UnaryOp(token, self.factor())
+        else:
+            self.error("Invalid factor")
 
     def term(self):
         node = self.factor()
@@ -122,13 +132,16 @@ class Parser:
         return self.boolean_expr()
 
     def parse(self):
-        return self.expr()
+        node = self.expr()
+        if self.current_token.type != TokenType.EOF:
+            self.error("Expected end of input")
+        return node
 
 
 # Test the parser
 def test_parser():
     test_cases = [
-        "42 + 10 ",
+        "42 ^ 10",
         "15 - 5 * 3",
         "3 * (7 - 2)",
         "20 / 4 % 3",
