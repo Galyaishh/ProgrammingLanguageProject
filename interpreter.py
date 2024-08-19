@@ -1,11 +1,10 @@
 from lexer import TokenType, Lexer
-from parserR import Parser, LambdaExpression
+from parserR import Parser, LambdaExpression, FunctionDef
 
 
 class NodeVisitor:
     def visit(self, node):
         return node.accept(self)
-
 
 class Interpreter(NodeVisitor):
 
@@ -63,45 +62,32 @@ class Interpreter(NodeVisitor):
 
     def visit_FunctionDef(self, node):
         self.env[node.name] = node
-        print(f"Stored function '{node.name}' in environment: {self.env}")
-        return None
+        return None  # Function definitions don't return a value
 
     def visit_FunctionCall(self, node):
-        func_def = self.env.get(node.name)
-        if not func_def:
+        func = self.env.get(node.name)
+        if not func:
             raise Exception(f"Function '{node.name}' is not defined")
+
+        if not isinstance(func, FunctionDef):
+            raise Exception(f"'{node.name}' is not a function")
+
+        if len(node.arguments) != len(func.arguments):
+            raise Exception(
+                f"Function '{node.name}' expects {len(func.arguments)} arguments, but got {len(node.arguments)}")
+
+        # Create a new environment for the function call
         local_env = self.env.copy()
-
-        for param, arg in zip(func_def.arguments, node.arguments):
-            local_env[str(param)] = self.visit(arg)
-
-        old_env = self.env
-        self.env = local_env
-
-        try:
-            result = self.visit(func_def.body)
-        finally:
-            self.env = old_env
-
-        return result
-
-    # def visit_LambdaExpression(self, node):
-    #     return (node.parameter, node.body, self.env.copy())
-
-    def visit_LambdaExpression(self, node):
-        lambda_expr, arg = node
-
-        # Create a new environment with the argument bound to the parameter
-        local_env = self.env.copy()
-        local_env[lambda_expr.parameter] = self.visit(arg)
+        for param, arg in zip(func.arguments, node.arguments):
+            local_env[param] = self.visit(arg)
 
         # Save the current environment and set the new one
         old_env = self.env
         self.env = local_env
 
         try:
-            # Evaluate the lambda body in the new environment
-            result = self.visit(lambda_expr.body)
+            # Execute the function body
+            result = self.visit(func.body)
         finally:
             # Restore the old environment
             self.env = old_env
@@ -150,9 +136,9 @@ def test_interpreter():
 
 def test_interpreter2():
     code = """
-    Defun { afik, (x,) }  
-        x + 88
+    Defun { add, (x, y) }  x + y
 
+    add(5, 3)
     """
     lexer = Lexer(code)
     parser = Parser(lexer)

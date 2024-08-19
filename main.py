@@ -20,7 +20,7 @@ def main():
             print(tree)
             result = interpreter.interpret(tree)
             print(result)
-            print(interpreter.env)
+            print("intepreter current env : \n",interpreter.env)
         except ParserError as e:
             print(f"Parser Error: {e}")
         except Exception as e:

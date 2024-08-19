@@ -5,8 +5,6 @@ class ParserError(Exception):
     pass
 
 
-
-
 class ASTNode:
     def accept(self, visitor):
         method_name = f'visit_{type(self).__name__}'
@@ -54,6 +52,7 @@ class Boolean(ASTNode):
     def __repr__(self):
         return f'{self.value}'
 
+
 class FunctionDef(ASTNode):
     def __init__(self, name, arguments, body):
         self.name = name
@@ -63,6 +62,7 @@ class FunctionDef(ASTNode):
     def __repr__(self):
         return f"FunctionDef(name={self.name}, arguments={self.arguments}, body={self.body})"
 
+
 class FunctionCall(ASTNode):
     def __init__(self, name, arguments):
         self.name = name
@@ -70,6 +70,7 @@ class FunctionCall(ASTNode):
 
     def __repr__(self):
         return f"FunctionCall(name={self.name}, arguments={self.arguments})"
+
 
 class Variable(ASTNode):
     def __init__(self, name):
@@ -80,12 +81,13 @@ class Variable(ASTNode):
 
 
 class LambdaExpression(ASTNode):
-    def __init__(self, parameter, body):
-        self.parameter = parameter
+    def __init__(self, params, args, body):
+        self.params = params
+        self.args = args
         self.body = body
 
     def __repr__(self):
-        return f"(Lambd {self.parameter} . {self.body})"
+        return f"(Lambd {self.params} . {self.body} , {self.args})"
 
 
 class Parser:
@@ -93,13 +95,11 @@ class Parser:
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
 
-
     def error(self, details=None):
         red_det = f"\033[91m{details}, at {self.lexer.pos} position.\033[0m"
         if details:
             raise Exception(red_det)
         raise Exception('Invalid syntax')
-
 
     def eat(self, token_type):
         if self.current_token.type == TokenType.INVALID:
@@ -119,7 +119,7 @@ class Parser:
         elif token.type == TokenType.BOOLEAN:
             self.eat(TokenType.BOOLEAN)
             if self.current_token.type in (
-                    TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULO):
+            TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULO):
                 self.error("Cannot use boolean in arithmetic expression")
             return Boolean(token.value)
         elif token.type == TokenType.LPAREN:
@@ -131,15 +131,12 @@ class Parser:
             self.eat(TokenType.NOT)
             return UnaryOp(token, self.factor())
         elif token.type == TokenType.IDENTIFIER:
+            name = token.value
             self.eat(TokenType.IDENTIFIER)
             if self.current_token.type == TokenType.LPAREN:
-                self.eat(TokenType.LPAREN)
-                args = self.argument_list()
-                self.eat(TokenType.RPAREN)
-                return FunctionCall(token.value, args)
+                return self.function_call(name)
             else:
-                # If not followed by '(', treat it as a variable
-                return Variable(token.value)
+                return Variable(name)
         else:
             self.error(f"Unexpected token {token.type} in factor")
 
@@ -156,7 +153,6 @@ class Parser:
             node = BinaryOp(left=node, op=token, right=self.factor())
         return node
 
-
     def arithmetic_expr(self):
         node = self.term()
         while self.current_token.type in (TokenType.PLUS, TokenType.MINUS):
@@ -171,8 +167,6 @@ class Parser:
             node = BinaryOp(left=node, op=token, right=right)
         return node
 
-
-
     def comparison_expr(self):
         node = self.arithmetic_expr()
         while self.current_token.type in (TokenType.EQUAL, TokenType.NOT_EQUAL,
@@ -182,7 +176,6 @@ class Parser:
             self.eat(self.current_token.type)
             node = BinaryOp(left=node, op=token, right=self.arithmetic_expr())
         return node
-
 
     def boolean_expr(self):
         node = self.comparison_expr()
@@ -197,20 +190,59 @@ class Parser:
             return self.function_definition()
         elif self.current_token.type == TokenType.LAMBD:
             return self.lambda_expression()
-        return self.boolean_expr() ## return a node!!
+        return self.boolean_expr()  ## return a node!!
 
-    def lambda_expression(self):
-        self.eat(TokenType.LAMBD)
-        if self.current_token.type != TokenType.IDENTIFIER:
-            self.error("Expected identifier after 'Lambd'")
-        parameter = self.current_token.value
-        self.eat(TokenType.IDENTIFIER)
-        self.eat(TokenType.DOT)
-        body = self.expr()
+    def function_call(self, name):
         self.eat(TokenType.LPAREN)
-        arg = self.expr()
+        arguments = []
+        if self.current_token.type != TokenType.RPAREN:
+            arguments.append(self.expr())
+            while self.current_token.type == TokenType.COMMA:
+                self.eat(TokenType.COMMA)
+                arguments.append(self.expr())
         self.eat(TokenType.RPAREN)
-        return LambdaExpression(parameter, body), arg
+        return FunctionCall(name, arguments)
+
+    def function_definition(self):
+        self.eat(TokenType.DEFUN)
+        self.eat(TokenType.LBRACE)
+
+        # Parse function name
+        name = self.current_token.value
+        self.eat(TokenType.IDENTIFIER)
+
+        self.eat(TokenType.COMMA)
+
+        # Parse function arguments
+        self.eat(TokenType.LPAREN)
+        arguments = self.argument_list()
+        self.eat(TokenType.RPAREN)
+
+        self.eat(TokenType.RBRACE)
+
+        # Parse function body
+        body = self.expr()
+
+        return FunctionDef(name, arguments, body)
+
+    def argument_list(self):
+        args = []
+        if self.current_token.type != TokenType.RPAREN:
+            args.append(self.current_token.value)
+            self.eat(TokenType.IDENTIFIER)
+            while self.current_token.type == TokenType.COMMA:
+                self.eat(TokenType.COMMA)
+                args.append(self.current_token.value)
+                self.eat(TokenType.IDENTIFIER)
+        return args
+
+    def expr(self):
+        if self.current_token.type == TokenType.DEFUN:
+            return self.function_definition()
+        elif self.current_token.type == TokenType.LAMBD:
+            return self.lambda_expression()
+        return self.boolean_expr()
+
 
     def parse(self):
         node = self.expr()
@@ -219,48 +251,16 @@ class Parser:
                 f"Syntax error: got {self.current_token.type} : '{self.current_token.value}'")
         return node
 
-    def function_definition(self):
-        self.eat(TokenType.DEFUN)
-        self.eat(TokenType.LBRACE)
-
-        name_token = self.current_token
-        self.eat(TokenType.IDENTIFIER)
-
-        self.eat(TokenType.COMMA)
-        self.eat(TokenType.LPAREN)
-        arguments = self.argument_list()
-        self.eat(TokenType.RPAREN)
-        self.eat(TokenType.RBRACE)
-        body = self.expr()
-
-        return FunctionDef(name_token.value, arguments, body)
-
-    def argument_list(self):
-        args = []
-        while self.current_token.type != TokenType.RPAREN:
-            # Allow arguments to be full expressions, not just identifiers
-            args.append(self.expr())
-            if self.current_token.type == TokenType.COMMA:
-                self.eat(TokenType.COMMA)
-        return args
-
 
 # Test the parser
 def test_parser():
-    code = " Defun {factorial, (n,)} n + 4"
-  #  code = "Lambd x.(x+5)(5)"
-    #"Lambd x.(x+5)(factorial(4))
-
-    lst = [1,2,3]
 
 
-    lexer = Lexer(code)
-    parser = Parser(lexer)
-    ast = parser.parse()
-    print(ast)
     test_cases = [
-        "42 - 6 ^",
-        "-6"
+        "Defun { add, (x, y) } x + y",
+        "add(5, 3)",
+         "42 - 6",
+        # "-6"
         # "15 - 5 * 3",
         # "3 * (7 - 2)",
         # "20 / 4 % 3",
@@ -278,6 +278,7 @@ def test_parser():
         parser = Parser(lexer)
         try:
             ast = parser.parse()
+            print(ast)
             print("Parsing successful")
             # Here you could add a function to print the AST structure
         except Exception as e:
