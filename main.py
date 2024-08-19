@@ -4,6 +4,8 @@ from parserR import Parser, ParserError
 
 
 def main():
+    interpreter = Interpreter()
+
     while True:
         try:
             text = input('foo>> ')
@@ -13,12 +15,12 @@ def main():
             continue
         lexer = Lexer(text)
         parser = Parser(lexer)
-        interpreter = Interpreter()
         try:
             tree = parser.parse()
             print(tree)
             result = interpreter.interpret(tree)
             print(result)
+            print(interpreter.env)
         except ParserError as e:
             print(f"Parser Error: {e}")
         except Exception as e:

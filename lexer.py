@@ -23,7 +23,14 @@ class TokenType(Enum):
     LESS_THAN_OR_EQUAL = auto()
     EOF = auto()
     INVALID = auto()
-
+    DEFUN = auto()
+    LAMBD = auto()
+    IDENTIFIER = auto()
+    COMMA = auto()
+    LBRACE = auto()
+    RBRACE = auto()
+    VARIABLE = auto()
+    DOT = auto()
 
 class Token:
     def __init__(self, type: TokenType, value):
@@ -51,6 +58,8 @@ class Lexer:
         if peek_pos >= len(self.text):
             return None
         return self.text[peek_pos]
+
+
 
     def get_next_token(self):
         if self.pos >= len(self.text):
@@ -80,7 +89,28 @@ class Lexer:
             self.pos += len(match.group())
             return Token(TokenType.BOOLEAN, value)
 
-        # Arithmetic operations
+        # Func
+        if self.text[self.pos:].startswith("Defun"):
+            self.pos += len("Defun")
+            return Token(TokenType.DEFUN, "Defun")
+
+        if self.text[self.pos:].startswith("Lambd"):
+            self.pos += len("Lambd")
+            return Token(TokenType.LAMBD, "Lambd")
+
+        if current_char == '.':
+            self.pos += 1
+            return Token(TokenType.DOT, '.')
+            # Identifiers (e.g., function names)
+        if current_char.isalpha():
+            identifier_pattern = r'[a-zA-Z_][a-zA-Z0-9_]*'
+            match = re.match(identifier_pattern, self.text[self.pos:])
+            if match:
+                value = match.group()
+                self.pos += len(match.group())
+                return Token(TokenType.IDENTIFIER, value)
+
+                # Arithmetic operations
         if current_char == '+':
             self.pos += 1
             return Token(TokenType.PLUS, '+')
@@ -135,6 +165,19 @@ class Lexer:
             self.pos += 1
             return Token(TokenType.LESS_THAN, '<')
 
+            # comma
+        if current_char == ',':
+            self.pos += 1
+            return Token(TokenType.COMMA, ',')
+
+            # Braces
+        if current_char == '{':
+            self.pos += 1
+            return Token(TokenType.LBRACE, '{')
+
+        if current_char == '}':
+            self.pos += 1
+            return Token(TokenType.RBRACE, '}')
         # If we've reached this point, the character is invalid
         self.pos += 1
         return Token(TokenType.INVALID, current_char)
@@ -142,26 +185,42 @@ class Lexer:
 
 # Test the lexer
 def test_lexer():
+
+
+    #code = "Defun afiksoco, (n,)}"
+    code = """
+    Lambd x.(x == 5)
+    
+    """
+    lexer = Lexer(code)
+
+    token = lexer.get_next_token()
+    while token.type != TokenType.EOF:
+        print(token)
+        token = lexer.get_next_token()
+
+
+
     test_cases = [
-        "42 + 10 ^",
-        "15 - 5",
-        "3 * 7",
-        "20 / 4",
-        "17 % 5",
-        "True && False",
-        "True || False",
-        "!True",
-        "10 + 5 * 2 - 8 / 4 % 3",
-        "True && !False || True",
-        "5 == 5",
-        "10 != 5",
-        "7 > 3",
-        "2 < 8",
-        "6 >= 6",
-        "4 <= 5",
-        "1 + 2 == 3 && 4 * 5 > 15",
-        "Hello World",  # This should produce INVALID tokens
-        "3 $ 4"  # This should produce an INVALID token for $
+        # "42 + 10 ^",
+        # "15 - 5",
+        # "3 * 7",
+        # "20 / 4",
+        # "17 % 5",
+        # "True && False",
+        # "True || False",
+        # "!True",
+        # "10 + 5 * 2 - 8 / 4 % 3",
+        # "True && !False || True",
+        # "5 == 5",
+        # "10 != 5",
+        # "7 > 3",
+        # "2 < 8",
+        # "6 >= 6",
+        # "4 <= 5",
+        # "1 + 2 == 3 && 4 * 5 > 15",
+        # "Hello World",  # This should produce INVALID tokens
+        # "3 $ 4"  # This should produce an INVALID token for $
     ]
 
     for case in test_cases:

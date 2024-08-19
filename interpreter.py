@@ -1,5 +1,5 @@
 from lexer import TokenType, Lexer
-from parserR import Parser
+from parserR import Parser, LambdaExpression
 
 
 class NodeVisitor:
@@ -8,6 +8,10 @@ class NodeVisitor:
 
 
 class Interpreter(NodeVisitor):
+
+    def __init__(self):
+        self.env = {}
+
     def visit_BinaryOp(self, node):
         if node.op.type == TokenType.PLUS:
             return self.visit(node.left) + self.visit(node.right)
@@ -50,8 +54,70 @@ class Interpreter(NodeVisitor):
     def visit_Boolean(self, node):
         return node.value
 
+    def visit_Variable(self, node):
+        var_name = str(node.name)
+        if var_name not in self.env:
+            raise Exception(f"Variable '{var_name}' is not defined")
+
+        return self.env[var_name]
+
+    def visit_FunctionDef(self, node):
+        self.env[node.name] = node
+        print(f"Stored function '{node.name}' in environment: {self.env}")
+        return None
+
+    def visit_FunctionCall(self, node):
+        func_def = self.env.get(node.name)
+        if not func_def:
+            raise Exception(f"Function '{node.name}' is not defined")
+        local_env = self.env.copy()
+
+        for param, arg in zip(func_def.arguments, node.arguments):
+            local_env[str(param)] = self.visit(arg)
+
+        old_env = self.env
+        self.env = local_env
+
+        try:
+            result = self.visit(func_def.body)
+        finally:
+            self.env = old_env
+
+        return result
+
+    # def visit_LambdaExpression(self, node):
+    #     return (node.parameter, node.body, self.env.copy())
+
+    def visit_LambdaExpression(self, node):
+        lambda_expr, arg = node
+
+        # Create a new environment with the argument bound to the parameter
+        local_env = self.env.copy()
+        local_env[lambda_expr.parameter] = self.visit(arg)
+
+        # Save the current environment and set the new one
+        old_env = self.env
+        self.env = local_env
+
+        try:
+            # Evaluate the lambda body in the new environment
+            result = self.visit(lambda_expr.body)
+        finally:
+            # Restore the old environment
+            self.env = old_env
+
+        return result
+
     def interpret(self, tree):
-        return self.visit(tree)
+        results = []
+        if isinstance(tree, list):
+            for node in tree:
+                result = self.visit(node)
+                if result is not None:
+                    results.append(result)
+        else:
+            results.append(self.visit(tree))
+        return results[0]
 
 
 # Test the interpreter
@@ -82,5 +148,20 @@ def test_interpreter():
             print(f"Interpretation failed: {str(e)}")
 
 
+def test_interpreter2():
+    code = """
+    Defun { afik, (x,) }  
+        x + 88
+
+    """
+    lexer = Lexer(code)
+    parser = Parser(lexer)
+    ast = parser.parse()
+
+    interpreter = Interpreter()
+    result = interpreter.interpret(ast)
+    print(result)
+
+
 if __name__ == "__main__":
-    test_interpreter()
+    test_interpreter2()
