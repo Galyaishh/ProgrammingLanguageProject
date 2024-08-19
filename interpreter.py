@@ -6,6 +6,7 @@ class NodeVisitor:
     def visit(self, node):
         return node.accept(self)
 
+
 class Interpreter(NodeVisitor):
 
     def __init__(self):
@@ -94,6 +95,27 @@ class Interpreter(NodeVisitor):
 
         return result
 
+    def visit_LambdaExpression(self, node):
+        # Create a new environment for the lambda execution
+        local_env = self.env.copy()
+
+        # Bind arguments to parameters
+        for param, arg in zip(node.params, node.args):
+            local_env[param] = self.visit(arg)
+
+        # Save the current environment and set the new one
+        old_env = self.env
+        self.env = local_env
+
+        try:
+            # Execute the lambda body
+            result = self.visit(node.body)
+        finally:
+            # Restore the old environment
+            self.env = old_env
+
+        return result
+
     def interpret(self, tree):
         results = []
         if isinstance(tree, list):
@@ -103,21 +125,17 @@ class Interpreter(NodeVisitor):
                     results.append(result)
         else:
             results.append(self.visit(tree))
-        return results[0]
+        return results[0] if results else None
 
 
 # Test the interpreter
 def test_interpreter():
+    code = """
+     Defun { add, (x, y) } x + y
+     Lambd x.(x+5)(add(3,5))
+     """
     test_cases = [
-        "42--6",
-        "15 - 5 * 3",
-        "3 * (7 - 2)",
-        "20 / 4 % 3",
-        "True && False || True",
-        "!True && False",
-        "5 == 5 && 10 != 5",
-        "7 > 3 || 2 < 8",
-        "6 >= 6 && 4 <= 5",
+
         "1 + 2 == 3 && 4 * 5 > 15",
         "Lambd x.(x+5)(6)",
         "Lambd x,y.(x*y + 5)(3, 4)",

@@ -119,7 +119,7 @@ class Parser:
         elif token.type == TokenType.BOOLEAN:
             self.eat(TokenType.BOOLEAN)
             if self.current_token.type in (
-            TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULO):
+                    TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULO):
                 self.error("Cannot use boolean in arithmetic expression")
             return Boolean(token.value)
         elif token.type == TokenType.LPAREN:
@@ -272,7 +272,6 @@ class Parser:
             return self.lambda_expression()
         return self.boolean_expr()
 
-
     def parse(self):
         node = self.expr()
         if self.current_token.type != TokenType.EOF:
@@ -283,8 +282,6 @@ class Parser:
 
 # Test the parser
 def test_parser():
-
-
     test_cases = [
         "Defun { add, (x, y) } x + y",
         "add(5, 3)",
