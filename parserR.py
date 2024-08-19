@@ -236,6 +236,35 @@ class Parser:
                 self.eat(TokenType.IDENTIFIER)
         return args
 
+    def lambda_expression(self):
+        self.eat(TokenType.LAMBD)
+        params = []
+
+        # Parse parameters
+        params.append(self.current_token.value)
+        self.eat(TokenType.IDENTIFIER)
+        while self.current_token.type == TokenType.COMMA:
+            self.eat(TokenType.COMMA)
+            params.append(self.current_token.value)
+            self.eat(TokenType.IDENTIFIER)
+
+        self.eat(TokenType.DOT)
+
+        # Parse body
+        body = self.expr()
+
+        # Parse arguments
+        self.eat(TokenType.LPAREN)
+        args = []
+        if self.current_token.type != TokenType.RPAREN:
+            args.append(self.expr())
+            while self.current_token.type == TokenType.COMMA:
+                self.eat(TokenType.COMMA)
+                args.append(self.expr())
+        self.eat(TokenType.RPAREN)
+
+        return LambdaExpression(params, args, body)
+
     def expr(self):
         if self.current_token.type == TokenType.DEFUN:
             return self.function_definition()
@@ -259,7 +288,10 @@ def test_parser():
     test_cases = [
         "Defun { add, (x, y) } x + y",
         "add(5, 3)",
-         "42 - 6",
+        "42 - 6",
+        "Lambd x.(x+5)(6)",
+        "Lambd x,y.(x*y + 5)(3, 4)",
+        "Lambd z.(z * z)(10)",
         # "-6"
         # "15 - 5 * 3",
         # "3 * (7 - 2)",

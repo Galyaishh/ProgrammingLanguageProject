@@ -119,6 +119,9 @@ def test_interpreter():
         "7 > 3 || 2 < 8",
         "6 >= 6 && 4 <= 5",
         "1 + 2 == 3 && 4 * 5 > 15",
+        "Lambd x.(x+5)(6)",
+        "Lambd x,y.(x*y + 5)(3, 4)",
+        "Lambd z.(z * z)(10)",
     ]
 
     for case in test_cases:
