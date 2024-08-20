@@ -265,6 +265,14 @@ class Parser:
 
         return LambdaExpression(params, args, body)
 
+    def parse_program(self):
+        statements = []
+        while self.current_token.type != TokenType.EOF:
+            statements.append(self.expr())
+            if self.current_token.type == TokenType.NEWLINE:
+                self.eat(TokenType.NEWLINE)
+        return statements
+
     def expr(self):
         if self.current_token.type == TokenType.DEFUN:
             return self.function_definition()
@@ -272,12 +280,18 @@ class Parser:
             return self.lambda_expression()
         return self.boolean_expr()
 
+    # def parse(self):
+    #     node = self.expr()
+    #     if self.current_token.type != TokenType.EOF:
+    #         self.error(
+    #             f"Syntax error: got {self.current_token.type} : '{self.current_token.value}'")
+    #     return node
+
     def parse(self):
-        node = self.expr()
+        program = self.parse_program()
         if self.current_token.type != TokenType.EOF:
-            self.error(
-                f"Syntax error: got {self.current_token.type} : '{self.current_token.value}'")
-        return node
+            self.error(f"Syntax error: got {self.current_token.type} : '{self.current_token.value}'")
+        return program
 
 
 # Test the parser

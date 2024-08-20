@@ -31,6 +31,7 @@ class TokenType(Enum):
     RBRACE = auto()
     VARIABLE = auto()
     DOT = auto()
+    NEWLINE = auto()
 
 class Token:
     def __init__(self, type: TokenType, value):
@@ -178,6 +179,10 @@ class Lexer:
         if current_char == '}':
             self.pos += 1
             return Token(TokenType.RBRACE, '}')
+
+        if current_char == '\n':
+            self.pos += 1
+            return Token(TokenType.NEWLINE,'\n')
         # If we've reached this point, the character is invalid
         self.pos += 1
         return Token(TokenType.INVALID, current_char)
