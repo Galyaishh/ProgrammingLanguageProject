@@ -1,5 +1,5 @@
 from lexer import TokenType, Lexer
-from parserR import Parser, LambdaExpression, FunctionDef
+from parserR import Parser, FunctionDef
 
 
 class NodeVisitor:
@@ -63,7 +63,7 @@ class Interpreter(NodeVisitor):
 
     def visit_FunctionDef(self, node):
         self.env[node.name] = node
-        return None  # Function definitions don't return a value
+        return None
 
     def visit_FunctionCall(self, node):
         func = self.env.get(node.name)
