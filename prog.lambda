@@ -4,5 +4,6 @@ Lambd x,y.(x*y + 5)(3, 4)
 
 
 Defun { add, (x,y) } x - y
+10/0
 Defun { mul, (x,y) } x*y
 add(Lambd x.(Lambd y. (Lambd z. ( x + y + z)(6))(3))(5),Lambd x.(Lambd y. (Lambd z. ( x + y + z)(6))(3))(mul(6,9)))

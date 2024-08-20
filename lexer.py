@@ -31,7 +31,10 @@ class TokenType(Enum):
     RBRACE = auto()
     VARIABLE = auto()
     DOT = auto()
+    IF = auto()
+    ELSE = auto()
     NEWLINE = auto()
+
 
 class Token:
     def __init__(self, type: TokenType, value):
@@ -60,8 +63,6 @@ class Lexer:
             return None
         return self.text[peek_pos]
 
-
-
     def get_next_token(self):
         if self.pos >= len(self.text):
             return Token(TokenType.EOF, None)
@@ -74,13 +75,21 @@ class Lexer:
             return self.get_next_token()
 
         # Integer
-        if current_char.isdigit() or (current_char == '-' and (self.pos == 0 or self.text[self.pos-1] in '+-*/( ')):
+        if current_char.isdigit() or (current_char == '-' and (self.pos == 0 or self.text[self.pos - 1] in '+-*/( ')):
             integer_pattern = r'-?\d+'
             match = re.match(integer_pattern, self.text[self.pos:])
             if match:
                 value = int(match.group())
                 self.pos += len(match.group())
                 return Token(TokenType.INTEGER, value)
+
+        if self.text[self.pos:].startswith("if"):
+            self.pos += len("if")
+            return Token(TokenType.IF, "if")
+
+        if self.text[self.pos:].startswith("else"):
+            self.pos += len("else")
+            return Token(TokenType.ELSE, "else")
 
         # Boolean
         boolean_pattern = r'True|False'
@@ -182,7 +191,7 @@ class Lexer:
 
         if current_char == '\n':
             self.pos += 1
-            return Token(TokenType.NEWLINE,'\n')
+            return Token(TokenType.NEWLINE, '\n')
         # If we've reached this point, the character is invalid
         self.pos += 1
         return Token(TokenType.INVALID, current_char)
@@ -190,9 +199,7 @@ class Lexer:
 
 # Test the lexer
 def test_lexer():
-
-
-    #code = "Defun afiksoco, (n,)}"
+    # code = "Defun afiksoco, (n,)}"
     code = """
     Lambd x.(x == 5)
     
@@ -204,9 +211,8 @@ def test_lexer():
         print(token)
         token = lexer.get_next_token()
 
-
-
     test_cases = [
+        "if(x == 5) {y = 10} else {y = 20}"
         # "42 + 10 ^",
         # "15 - 5",
         # "3 * 7",

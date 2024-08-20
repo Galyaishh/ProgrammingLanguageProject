@@ -12,6 +12,9 @@ class Interpreter(NodeVisitor):
     def __init__(self):
         self.env = {}
 
+
+
+
     def visit_BinaryOp(self, node):
         if node.op.type == TokenType.PLUS:
             return self.visit(node.left) + self.visit(node.right)
