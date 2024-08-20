@@ -89,6 +89,18 @@ class LambdaExpression(ASTNode):
     def __repr__(self):
         return f"(Lambd {self.params} . {self.body} , {self.args})"
 
+class IfElse(ASTNode):
+    def __init__(self, condition, if_branch, else_branch=None):
+        self.condition = condition
+        self.if_branch = if_branch
+        self.else_branch = else_branch
+
+    def __repr__(self):
+        if self.else_branch:
+            return f"If({self.condition}) {{ {self.if_branch} }} Else {{ {self.else_branch} }}"
+        return f"If({self.condition}) {{ {self.if_branch} }}"
+
+
 
 class Parser:
     def __init__(self, lexer):
@@ -203,6 +215,24 @@ class Parser:
         self.eat(TokenType.RPAREN)
         return FunctionCall(name, arguments)
 
+    def if_else_statement(self):
+        self.eat(TokenType.IF)
+        self.eat(TokenType.LPAREN)
+        condition = self.boolean_expr()
+        self.eat(TokenType.RPAREN)
+        self.eat(TokenType.LBRACE)
+        if_branch = self.expr()  # Or parse a block of statements
+        self.eat(TokenType.RBRACE)
+
+        else_branch = None
+        if self.current_token.type == TokenType.ELSE:
+            self.eat(TokenType.ELSE)
+            self.eat(TokenType.LBRACE)
+            else_branch = self.expr()  # Or parse a block of statements
+            self.eat(TokenType.RBRACE)
+
+        return IfElse(condition, if_branch, else_branch)
+
     def function_definition(self):
         self.eat(TokenType.DEFUN)
         self.eat(TokenType.LBRACE)
@@ -278,14 +308,9 @@ class Parser:
             return self.function_definition()
         elif self.current_token.type == TokenType.LAMBD:
             return self.lambda_expression()
+        elif self.current_token.type == TokenType.IF:
+            return self.if_else_statement()
         return self.boolean_expr()
-
-    # def parse(self):
-    #     node = self.expr()
-    #     if self.current_token.type != TokenType.EOF:
-    #         self.error(
-    #             f"Syntax error: got {self.current_token.type} : '{self.current_token.value}'")
-    #     return node
 
     def parse(self):
         program = self.parse_program()
@@ -297,6 +322,7 @@ class Parser:
 # Test the parser
 def test_parser():
     test_cases = [
+        "if (x == 5){x + 10} else {5 / 20}",
         "Defun { add, (x, y) } x + y",
         "add(5, 3)",
         "42 - 6",

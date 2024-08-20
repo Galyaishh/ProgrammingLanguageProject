@@ -68,6 +68,15 @@ class Interpreter(NodeVisitor):
         self.env[node.name] = node
         return None
 
+    def visit_IfElse(self, node):
+        condition_value = self.visit(node.condition)
+        if condition_value:
+            return self.visit(node.if_branch)
+        elif node.else_branch is not None:
+            return self.visit(node.else_branch)
+        return None
+
+
     def visit_FunctionCall(self, node):
         func = self.env.get(node.name)
         if not func:
@@ -159,11 +168,7 @@ def test_interpreter():
 
 
 def test_interpreter2():
-    code = """
-    Defun { add, (x, y) }  x + y
-
-    add(5, 3)
-    """
+    code = "if(1 == 2){ 42 } else { 0 }"
     lexer = Lexer(code)
     parser = Parser(lexer)
     ast = parser.parse()

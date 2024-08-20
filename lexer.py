@@ -74,6 +74,13 @@ class Lexer:
             self.pos += 1
             return self.get_next_token()
 
+        if current_char == '#':
+            while current_char != '\n' and self.pos < len(self.text):
+                self.pos += 1
+                current_char = self.text[self.pos]
+            self.pos += 1  # Skip the newline character
+            return self.get_next_token()
+
         # Integer
         if current_char.isdigit() or (current_char == '-' and (self.pos == 0 or self.text[self.pos - 1] in '+-*/( ')):
             integer_pattern = r'-?\d+'
