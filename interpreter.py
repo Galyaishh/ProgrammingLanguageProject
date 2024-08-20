@@ -132,11 +132,17 @@ class Interpreter(NodeVisitor):
         results = []
         if isinstance(tree, list):
             for node in tree:
-                result = self.visit(node)
-                if result is not None:
-                    results.append(result)
+                try:
+                    result = self.visit(node)
+                    if result is not None:
+                        results.append(result)
+                except Exception as e:
+                    print(f"Error interpreting node {node}: {str(e)}")
         else:
-            results.append(self.visit(tree))
+            try:
+                results.append(self.visit(tree))
+            except Exception as e:
+                print(f"Error interpreting tree: {str(e)}")
         return results[0] if results else None
 
 

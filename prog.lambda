@@ -1,10 +1,10 @@
 Defun { add, (x, y) } x + y #deffffffffffffffff
 add(5, 3)
-Lambd x,y.(x*y + 5)(3, 4)
+(Lambd x,y.(x*y + 5)(3, 4))
 Defun { factorial, (n) } n == 0 || n * factorial(n - 1)
 factorial(4)
-Defun { con, (x,y) } if(add(x,y)==8) { x+y } else{x-y}
-con(5,8) #res
+Defun { con, (x,y) }  if(add(x,y)==8) { x+y } else{x-y}
+con(5,6) #res
 con(3,5)
 Defun { add, (x,y) } x - y
 Defun { mul, (x,y) } x*y

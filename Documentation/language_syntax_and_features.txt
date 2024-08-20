@@ -1,0 +1,179 @@
+
+### Language Overview
+
+This language supports basic math operations, logic (true/false), function definitions, anonymous functions (lambdas), and conditional statements.
+
+---
+
+### 1. Program Structure
+
+A program is made up of one or more statements. Each statement can be an expression, a function definition, a lambda (anonymous function), or a conditional (`if-else`) statement. Programs run one statement at a time in order.
+
+**Examples**
+
+5 + 3
+factorial(5)
+
+---
+
+### 2. Expressions
+
+Expressions are the core parts of the language. They can be simple like a number or true/false value, or more complex with operators, function calls, or nested expressions.
+
+**Types of Expressions:**
+- **Arithmetic Expressions:** Do math.
+- **Boolean Expressions:** Evaluate to `True` or `False`.
+- **Function Calls:** Run a function with given arguments.
+- **Lambda Expressions:** Create anonymous functions.
+
+**Examples**
+
+x + 5 * (y - 3)
+True && False || (x > 10)
+factorial(5)
+
+---
+
+### 3. Operators
+
+The language includes several operators for math, comparisons, and logic.
+
+**Arithmetic Operators:**
+- `+`: Add
+- `-`: Subtract
+- `*`: Multiply
+- `/`: Divide (whole number division)
+- `%`: Remainder
+
+**Comparison Operators:**
+- `==`: Equals
+- `!=`: Not equal
+- `<`: Less than
+- `>`: Greater than
+- `<=`: Less than or equal to
+- `>=`: Greater than or equal to
+
+**Logical Operators:**
+- `&&`: AND
+- `||`: OR
+- `!`: NOT
+
+**Examples**
+
+x + y * z
+x == y || z != w
+
+---
+
+### 4. Functions
+
+The language supports named functions (using `Defun`) and anonymous functions (lambdas). Functions take arguments and return a value.
+
+#### 4.1. Named Function Definitions
+
+Named functions are defined with the `Defun` keyword, followed by a structure that includes the function's name and its arguments.
+
+**Syntax**
+Defun {<function_name>,(<arg1>, <arg2>, ...)} <expression>
+
+
+**Examples**
+
+Defun {factorial ,(n)}
+    (n == 0) || (n * factorial(n - 1))
+
+
+#### 4.2. Lambda Expressions
+
+Lambdas are anonymous functions. They take one argument and return an expression.
+
+**Syntax**
+(Lambd <arg> . <expression>)
+
+
+**Example**
+(Lambd x . (Lambd y . (x + y)))
+
+#### 4.3. Function Calls
+
+Functions are called by their name followed by arguments in parentheses.
+
+**Syntax**
+<function_name>(<arg1>, <arg2>, ...)
+
+**Examples**
+factorial(5)
+
+---
+
+### 5. Conditional Statements
+
+The language supports `if-else` statements to control the flow based on conditions.
+
+**Syntax:**
+if (<condition>) { <statement> } else { <statement> }
+
+
+**Example**
+
+if (x > 10) {
+    x * 2
+} else {
+    x + 2
+}
+
+---
+
+### 6. Comments
+
+Comments are not directly supported but can be added by modifying the lexer to ignore lines starting with a special character (e.g., `#`).
+
+---
+
+### 7. Error Handling
+
+Errors in the program are usually caught during parsing or execution. Syntax errors or undefined variables/functions will raise an exception.
+
+---
+
+### 8. Interactive Mode and Debugging
+
+The language allows for an interactive mode where you can type expressions and see results immediately. A debug mode is also available, showing the internal state after each statement.
+
+**Examples**
+
+foo>> (3 + 4) * (2 - 1)
+foo>> factorial(5)
+
+**Debug Mode**
+
+debug>> Debug mode enabled
+debug>> factorial(5)
+FunctionDef(name=factorial, arguments=(n,), body=(n == 0) or (n * factorial(n - 1)))
+
+---
+
+### 10. File Execution
+
+You can run programs from *.lambda files, which is useful for more complex scripts.
+
+**Example**
+
+python main.py program.lambda
+
+
+---
+
+### 10. Example Program
+
+Here’s an example program:
+
+Defun { factorial, (n) } n == 0 || n * factorial(n - 1)
+factorial(4)
+
+Defun { add, (x, y) }  if(add(x,y)==8) { x+y } else{x-y}
+
+debug>> Defun { add, (x,y) } x + y
+[FunctionDef(name=add, arguments=['x', 'y'], body=(x Token(PLUS, +) y))]
+Interpreter current env:
+ {'add': FunctionDef(name=add, arguments=['x', 'y'], body=(x Token(PLUS, +) y))}

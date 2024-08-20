@@ -1,0 +1,63 @@
+<program> ::= <statement> | <statement> <program>
+
+<statement> ::= <assignment>
+              | <function_def>
+              | <if_else>
+              | <expression>
+              | <lambda_expression>
+
+<function_def> ::= "Defun" "{ <identifier> "," "(" <identifier_list> ")" "}" <expression>
+
+<if_else> ::= "if" "(" <boolean_res> ")" "{" <statement> "}" "else" "{" <statement> "}"
+
+<identifier_list> ::= <identifier> | <identifier> "," <identifier_list>
+
+<expression> ::= <term> | <term> <arithmetic_op> <expression>
+               | "(" <expression> ")"
+               | "Lambd" <identifier> "." <expression>
+               | <function_call>
+               | <boolean_literal>
+               | <number>
+
+<lambda_expression> ::= "Lambd" <identifier> "." <expression>
+
+<function_call> ::= <identifier> "(" <argument_list> ")"
+
+<argument_list> ::= <expression> | <expression> "," <argument_list>
+
+<term> ::= <factor> | <factor> <arithmetic_op> <term>
+
+<factor> ::= <number> | <boolean_literal> | <identifier> | "(" <expression> ")"
+
+<boolean_res> ::= <boolean_term> | <boolean_term> <boolean_op> <boolean_res>
+
+<boolean_term> ::= <expression> <comparison_op> <expression> | <boolean_literal>
+
+<arithmetic_op> ::= "+" | "-" | "*" | "/" | "%"
+
+<comparison_op> ::= "==" | "!=" | "<" | ">" | "<=" | ">="
+
+<boolean_op> ::= "&&" | "||" | "!"
+
+<identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
+
+<number> ::= [0-9]+ | "-" [0-9]+
+
+<boolean_literal> ::= "True" | "False"
+
+
+
+Explanation:
+<program>: Represents the entire sequence of statements in a program.
+<statement>: Represents a single executable unit, which can be a function definition, conditional statement, expression, or lambda expression.
+<function_def>: Represents a named function definition with arguments and a body.
+<if_else>: Represents a conditional statement with if and else branches.
+<lambda_expression>: Represents an anonymous function (lambda expression).
+<function_call>: Represents a call to a function with arguments.
+<expression>: General expression, including terms, operators, and nested expressions.
+<term>: Part of an expression, typically used to manage operator precedence.
+<factor>: The basic unit of expressions, such as numbers, booleans, or identifiers.
+<operator>: Represents various operators supported by the language.
+<identifier>: Represents valid variable names and function names.
+<number>: Represents integer literals.
+<boolean_literal>: Represents boolean values True and False.

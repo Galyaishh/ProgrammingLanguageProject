@@ -50,7 +50,7 @@ def execute_single_statement(text, interpreter, debug_mode):
         if debug_mode:
             print(tree)
         result = interpreter.interpret(tree)
-        if result:
+        if result is not None:
             print(result)
         if debug_mode:
             print("Interpreter current env:\n", interpreter.env)
