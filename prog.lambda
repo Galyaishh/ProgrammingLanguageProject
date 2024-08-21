@@ -1,10 +1,69 @@
-Defun { add, (x, y) } x + y #deffffffffffffffff
-add(5, 3)
-(Lambd x,y.(x*y + 5)(3, 4))
-Defun { factorial, (n) } n == 0 || n * factorial(n - 1)
-factorial(4)
-Defun { con, (x,y) }  if(add(x,y)==8) { x+y } else{x-y}
-con(5,6) #res
-con(3,5)
+####func def
+
+Defun { factorial, (n) }
+    n == 0  ||  n * factorial(n-1)
+
+
+Defun { add, (x, y) } x + y
+
 Defun { mul, (x,y) } x*y
+
+Defun { factorial, (n) } n == 0 || n * factorial(n - 1)
+
+Defun { con, (x,y) } if(add(x,y)==8) { x+y } else{x-y}
+
+Defun { max, (a, b) }
+    if (a > b) {
+        a
+    } else {
+        b
+    }
+
+Lambd x,y.(x*y + 5)(3, 4)
+# Expected output: 17
+
 add(Lambd x.(Lambd y. (Lambd z. ( x + y + z)(6))(3))(5),Lambd x.(Lambd y. (Lambd z. (x + y + z)(6))(3))(mul(6,9)))
+# Expected output: 77
+
+factorial(5)
+# Expected output: 120
+
+con(5,6)
+# Expected output: -1
+
+con(3,5)
+# Expected output: 8
+
+add(5, 3)
+# Expected output: 8
+
+mul(5,factorial(4))
+# Expected output: 120
+
+# boolean
+
+True && !False
+# Expected output: True
+
+False || (True || False)
+# Expected output: True
+
+### aritmetic
+
+5 * (9 + 4 * (add( 2 , -6)))
+# Expected output: -35
+
+(2 + 5 ) * ( 6 - 2 )
+# Expected output:  28
+
+10-10
+# Expected output: 0
+
+### errors
+
+add(2,3,5)
+
+10/0
+# Expected output: Error (division by zero)
+
+
