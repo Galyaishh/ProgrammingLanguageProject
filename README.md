@@ -1,2 +1,99 @@
 # ProgrammingLanguageProject
 
+### User Guide for Running the Interpreter
+
+This guide provides instructions for running the interpreter in both interactive mode and file execution mode.
+
+
+1. Running the Interpreter in Interactive Mode
+
+Interactive mode allows you to type expressions, functions, and statements directly into the interpreter and see the results immediately. This mode is ideal for experimenting with the language and testing small snippets of code.
+
+**Step-by-Step Instructions:**
+
+**Launch the Interpreter:**
+   - Open your terminal or command prompt.
+   - Navigate to the directory where your interpreter files are located.
+   - Run the following command to start the interpreter:
+
+     py main.py
+
+
+ **Enter Commands:**
+   - Once the interpreter starts, you'll see a prompt (`foo>>`).
+   - You can now type any valid expression, function, or statement.
+   - Press `Enter` to evaluate the command and see the result.
+
+**Examples:**
+
+foo>> 5 + 3
+8
+
+foo>> Defun { add, (x, y) } x + y
+foo>> add(5, 3)
+8
+
+
+
+**Exit the Interpreter:**
+- To exit the interpreter, simply type `exit` or press `Ctrl+C`.
+
+___________________________________________________________________________________________
+
+2. Running the Interpreter with `.lambda` Files
+
+The interpreter is designed to execute scripts written in `.lambda` files. These files contain a series of commands, function definitions, and expressions in the language.
+
+**Step-by-Step Instructions:**
+
+**Create a `.lambda` Script File:**
+- Use any text editor to write your program.
+- Save the file with a `.lambda` extension (e.g., `program.lambda`).
+- Example content for the file:
+  ```
+  Defun { add, (x, y) } x + y #deffffffffffffffff
+  add(5, 3)
+  (Lambd x,y.(x*y + 5)(3, 4))
+  Defun { factorial, (n) } n == 0 || n * factorial(n - 1)
+  factorial(4)
+  Defun { con, (x,y) } if(add(x,y)==8) { x+y } else{x-y}
+  con(5,6) #res
+  con(3,5)
+  Defun { add, (x,y) } x - y
+  Defun { mul, (x,y) } x*y
+  add(Lambd x.(Lambd y. (Lambd z. ( x + y + z)(6))(3))(5),Lambd x.(Lambd y. (Lambd z. (x + y + z)(6))(3))(mul(6,9)))
+  ```
+
+**Run the `.lambda` Script:**
+- Open your terminal or command prompt.
+- Navigate to the directory where your `.lambda` script file is located.
+- Run the following command, replacing `program.lambda` with the name of your file:
+  ```
+  py main.py prog.lambda
+  ```
+
+**View the Output:**
+- The interpreter will execute the script and display the results in the terminal.
+
+**Modify and Re-run:**
+- You can edit your `.lambda` script file, save the changes, and run it again using the same command.
+
+___________________________________________________________________________________________
+
+
+3. Debug Mode (Optional)
+
+You can enable debug mode to get detailed information about the internal state of the interpreter as it processes the commands or `.lambda` file.
+
+**Enabling Debug Mode:**
+
+- To toggle debug mode in REPL, write 'debug', it will show a message that indicates current mode and the prompt will change (foo>> / debug>>)
+- To run the program from a file in debug mode, use the -d flag when executing the file.
+
+  ```
+  py main.py program.lambda -d
+  ```
+
+**Inspect the Output:**
+- The interpreter will display additional details about variable states, function definitions, and the evaluation process.
+
