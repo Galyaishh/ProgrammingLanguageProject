@@ -137,12 +137,12 @@ class Interpreter(NodeVisitor):
                     if result is not None:
                         results.append(result)
                 except Exception as e:
-                    print(f"Error interpreting node {node}: {str(e)}")
+                    print(f"Runtime error : {str(e)}")
         else:
             try:
                 results.append(self.visit(tree))
             except Exception as e:
-                print(f"Error interpreting tree: {str(e)}")
+                print(f"{str(e)}")
         return results[0] if results else None
 
 

@@ -6,15 +6,18 @@ def main():
     q2()
     print(q3([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
     q4()
+    print(q5([1, 2, 3, 4, 5, 6]))
+    print(q6([["madam", "test", "level"], ["hello", "racecar", "world"], ["noon", "civic", "radar"]]))
+    print(q8()([10, 3, 5, 8, 2, 11, 4, 7]))
+
 
 def q1():
-    fibonacci = lambda n: (lambda f, n: f(f, n))(lambda f, n, a=0, b=1: [] if n == 0 else [a] + f(f, n - 1, b, a + b), n)
-    print(fibonacci(8))
-
+    fibonacci = lambda n: [0, 1][:n] if n <= 2 else fibonacci(n - 1) + [fibonacci(n - 1)[-1] + fibonacci(n - 2)[-1]]
+    print(fibonacci(9))
 
 def q2():
     concatenate = lambda lst: lst[0] if len(lst) == 1 else lst[0] + ' ' + concatenate(lst[1:])
-    print(concatenate(["Hello", "world", "this", "is", "Python"]))
+    print(concatenate(["Hello", "world", "this", "is", "afik&gal"]))
 
 def q3(lst):
     return list(map(

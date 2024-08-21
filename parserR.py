@@ -108,7 +108,7 @@ class Parser:
         self.current_token = self.lexer.get_next_token()
 
     def error(self, details=None):
-        red_det = f"\033[91m{details}, at {self.lexer.pos} position.\033[0m"
+        red_det = f"Syntax error: {details}, at {self.lexer.pos} position."
         if details:
             raise Exception(red_det)
         raise Exception('Invalid syntax')

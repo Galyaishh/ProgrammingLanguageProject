@@ -1,0 +1,75 @@
+
+### Design Considerations and Assumptions
+_________________________________________
+
+### 1. Language Design
+
+The language is designed to be simple, focusing on ease of use and flexibility. It supports basic math operations, boolean logic, functions, and conditional statements.
+
+**Assumptions:**
+- Users have basic programming knowledge.
+- The language is mainly for educational purposes and simple scripting.
+
+---
+
+### 2. Expressions
+
+Expressions are key components of the language, handling math, logic, and function calls.
+
+**Design Choices:**
+- **Operator Precedence:** Standard math rules are followed.
+- **Error Handling:** Syntax errors are caught early.
+
+**Assumptions:**
+- Users expect familiar math rules and clear error messages.
+
+---
+
+### 3. Functions
+
+The language supports both named functions and anonymous lambdas, allowing for reusable code and flexible programming styles.
+
+**Design Choices:**
+- **Named Functions:** Use `Defun` for clear definitions.
+- **Lambdas:** Quick, inline functions for flexible usage.
+
+**Assumptions:**
+- Users are familiar with functions and expect easy-to-use syntax.
+
+---
+
+### 4. Conditional Statements
+
+`If-else` statements provide simple control flow based on boolean conditions.
+
+**Design Choices:**
+- **Simplicity:** Clear and straightforward syntax for conditionals.
+
+**Assumptions:**
+- Users understand basic control flow and expect familiar conditional logic.
+
+---
+
+### 5. Error Handling
+
+The language includes basic error handling to catch syntax and runtime errors, with clear messages to help users fix issues.
+
+**Design Choices:**
+- **Early Detection:** Syntax errors are caught by the parser.
+- **Runtime Handling:** The interpreter manages execution errors.
+
+**Assumptions:**
+- Users expect helpful error messages that guide them in correcting mistakes.
+
+---
+
+### 6. Interactive and Debugging Modes
+
+Interactive mode allows for real-time feedback, while debug mode shows the program’s state after each step.
+
+**Design Choices:**
+- **Immediate Feedback:** Users can quickly test code in interactive mode.
+- **Debugging:** Helps identify logical errors by showing variable states.
+
+**Assumptions:**
+- Users benefit from immediate feedback and simple debugging tools.

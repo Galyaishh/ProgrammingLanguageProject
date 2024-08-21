@@ -9,7 +9,7 @@ def main():
     debug_mode = False
     interpreter = Interpreter()
 
-    if len(sys.argv) in [2, 3]:
+    if len(sys.argv) in [2, 3]:  # Executing from file
         filename = sys.argv[1]
         if len(sys.argv) == 3 and sys.argv[2] == '-d':
             debug_mode = True
@@ -22,7 +22,7 @@ def main():
         run_interactive_mode(interpreter, debug_mode)
 
 
-def run_interactive_mode(interpreter, debug_mode):
+def run_interactive_mode(interpreter, debug_mode):  # REPL mode
     while True:
         try:
             prompt = 'debug>> ' if debug_mode else 'foo>> '
@@ -53,7 +53,7 @@ def execute_single_statement(text, interpreter, debug_mode):
         if result is not None:
             print(result)
         if debug_mode:
-            print("Interpreter current env:\n", interpreter.env)
+            print("Interpreter current env:\n", list(interpreter.env.keys()))
     except ParserError as e:
         print(f"Parser Error: {e}")
     except Exception as e:
@@ -66,12 +66,19 @@ def run_program(program_text, debug_mode):
     parser = Parser(lexer)
     try:
         ast = parser.parse()
-        if debug_mode:
-            print(ast)
+
         for statement in ast:
+
             result = interpreter.interpret(statement)
-            if result:
-                print(result)
+            if debug_mode:
+                print("AST of the statement:\n", statement, end="\n")
+                print("Interpreter current env:\n", list(interpreter.env.keys()))
+
+                if result is not None:
+                    print("Result: ", result, end="\n\n")
+            else:
+                if result is not None:
+                    print(result)
     except Exception as e:
         print(f"Error executing program: {e}")
 

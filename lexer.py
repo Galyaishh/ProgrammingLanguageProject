@@ -55,7 +55,7 @@ class Lexer:
         self.pos = 0
 
     def error(self):
-        return LexerError(f'Invalid character: {self.text[self.pos]}')
+        raise Exception(f"Lexer error: invalid character '{self.text[self.pos]}'")
 
     def peek(self):
         peek_pos = self.pos + 1
@@ -69,7 +69,7 @@ class Lexer:
 
         current_char = self.text[self.pos]
 
-        # Skip whitespace
+        # skip whitespace
         if current_char.isspace():
             self.pos += 1
             return self.get_next_token()
@@ -118,7 +118,7 @@ class Lexer:
         if current_char == '.':
             self.pos += 1
             return Token(TokenType.DOT, '.')
-            # Identifiers (e.g., function names)
+        # Identifiers (e.g., function names)
         if current_char.isalpha():
             identifier_pattern = r'[a-zA-Z_][a-zA-Z0-9_]*'
             match = re.match(identifier_pattern, self.text[self.pos:])
@@ -127,7 +127,7 @@ class Lexer:
                 self.pos += len(match.group())
                 return Token(TokenType.IDENTIFIER, value)
 
-                # Arithmetic operations
+        # Arithmetic operations
         if current_char == '+':
             self.pos += 1
             return Token(TokenType.PLUS, '+')
@@ -200,6 +200,7 @@ class Lexer:
             self.pos += 1
             return Token(TokenType.NEWLINE, '\n')
         # If we've reached this point, the character is invalid
+        self.error()
         self.pos += 1
         return Token(TokenType.INVALID, current_char)
 
