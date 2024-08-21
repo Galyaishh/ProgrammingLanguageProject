@@ -202,7 +202,7 @@ class Parser:
             return self.function_definition()
         elif self.current_token.type == TokenType.LAMBD:
             return self.lambda_expression()
-        return self.boolean_expr()  ## return a node!!
+        return self.boolean_expr()  ## returns a node!!
 
     def function_call(self, name):
         self.eat(TokenType.LPAREN)
@@ -329,16 +329,6 @@ def test_parser():
         "Lambd x.(x+5)(6)",
         "Lambd x,y.(x*y + 5)(3, 4)",
         "Lambd z.(z * z)(10)",
-        # "-6"
-        # "15 - 5 * 3",
-        # "3 * (7 - 2)",
-        # "20 / 4 % 3",
-        # "True && False || True",
-        # "!True && False",
-        # "5 == 5 && 10 != 5",
-        # "7 > 3 || 2 < 8",
-        # "6 >= 6 && 4 <= 5",
-        # "1 + 2 == 3 && 4 * 5 > 15",
     ]
 
     for case in test_cases:

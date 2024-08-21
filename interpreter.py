@@ -23,7 +23,7 @@ class Interpreter(NodeVisitor):
         elif node.op.type == TokenType.MULTIPLY:
             return self.visit(node.left) * self.visit(node.right)
         elif node.op.type == TokenType.DIVIDE:
-            return self.visit(node.left) // self.visit(node.right)  # Integer division
+            return self.visit(node.left) // self.visit(node.right)
         elif node.op.type == TokenType.MODULO:
             return self.visit(node.left) % self.visit(node.right)
         elif node.op.type == TokenType.AND:
@@ -185,4 +185,4 @@ def test_interpreter2():
 
 
 if __name__ == "__main__":
-    test_interpreter2()
+    test_interpreter()

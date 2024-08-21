@@ -63,6 +63,7 @@ False || (True || False)
 
 add(2,3,5)
 
+
 10/0
 # Expected output: Error (division by zero)
 

@@ -220,26 +220,11 @@ def test_lexer():
         token = lexer.get_next_token()
 
     test_cases = [
-        "if(x == 5) {y = 10} else {y = 20}"
-        # "42 + 10 ^",
-        # "15 - 5",
-        # "3 * 7",
-        # "20 / 4",
-        # "17 % 5",
-        # "True && False",
-        # "True || False",
-        # "!True",
-        # "10 + 5 * 2 - 8 / 4 % 3",
-        # "True && !False || True",
-        # "5 == 5",
-        # "10 != 5",
-        # "7 > 3",
-        # "2 < 8",
-        # "6 >= 6",
-        # "4 <= 5",
-        # "1 + 2 == 3 && 4 * 5 > 15",
-        # "Hello World",  # This should produce INVALID tokens
-        # "3 $ 4"  # This should produce an INVALID token for $
+        "42 + 10",
+        "15 - 5",
+        "3 * 7",
+        "10 + 5 * 2 - 8 / 4 % 3",
+        "True && !False || True"
     ]
 
     for case in test_cases:
