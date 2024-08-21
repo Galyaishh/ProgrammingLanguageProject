@@ -85,7 +85,7 @@ Defun {factorial ,(n)}
 
 #### 4.2. Lambda Expressions
 
-Lambdas are anonymous functions. They take one argument and return an expression.
+Lambdas are anonymous functions. They take args and return an expression.
 
 **Syntax**
 (Lambd <arg> . <expression>)
@@ -126,8 +126,12 @@ if (x > 10) {
 
 ### 6. Comments
 
-Comments are not directly supported but can be added by modifying the lexer to ignore lines starting with a special character (e.g., `#`).
+Comments are supported when executing program from a file, use '#' to start a comment line.
 
+**Examples**
+
+2 + 6 #this is a commenttttttttt
+result will be 8
 ---
 
 ### 7. Error Handling
